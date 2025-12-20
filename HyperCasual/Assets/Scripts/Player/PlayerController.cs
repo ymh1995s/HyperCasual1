@@ -19,9 +19,23 @@ public class PlayerController : MonoBehaviour
     private float _targetX;
     private bool _isDragging;
 
+    // --- 추가: 초기 상태 보관 ---
+    private Vector3 _initialPosition;
+    private float _initialForwardSpeed;
+    private float _initialLateralSpeed;
+    private float _initialLateralSmooth;
+    private float _initialMaxX;
+
     void Start()
     {
         _targetX = transform.position.x;
+
+        // 저장 초기값
+        _initialPosition = transform.position;
+        _initialForwardSpeed = _forwardSpeed;
+        _initialLateralSpeed = _lateralSpeed;
+        _initialLateralSmooth = _lateralSmooth;
+        _initialMaxX = _maxX;
     }
 
     void Update()
@@ -92,5 +106,27 @@ public class PlayerController : MonoBehaviour
 
         _targetX += move;
         _targetX = Mathf.Clamp(_targetX, -_maxX, _maxX);
+    }
+
+    // --- 추가: 스테이지가 리셋될 때 호출하여 플레이어를 초기 위치/상태로 되돌립니다 ---
+    public void ResetToStart()
+    {
+        // 위치와 내부 타깃값 초기화
+        transform.position = _initialPosition;
+        _targetX = transform.position.x;
+
+        // 속성 복원
+        _forwardSpeed = _initialForwardSpeed;
+        _lateralSpeed = _initialLateralSpeed;
+        _lateralSmooth = _initialLateralSmooth;
+        _maxX = _initialMaxX;
+
+        // 물리적 속도가 있다면 정지
+        var rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 }

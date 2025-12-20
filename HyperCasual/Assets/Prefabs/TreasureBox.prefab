@@ -70,6 +70,7 @@ MonoBehaviour:
   _type: 3
   _value: 1
   _autoDestroy: 1
+  _pileOffset: {x: 0, y: 0.4, z: 0}
 --- !u!1 &1870260638317423962
 GameObject:
   m_ObjectHideFlags: 0
