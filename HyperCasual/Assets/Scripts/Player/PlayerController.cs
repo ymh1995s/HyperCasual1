@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -26,6 +27,10 @@ public class PlayerController : MonoBehaviour
     private float _initialLateralSmooth;
     private float _initialMaxX;
 
+    // Death state
+    private bool _isDead = false;
+    private Animator _animator;
+
     void Start()
     {
         _targetX = transform.position.x;
@@ -36,10 +41,16 @@ public class PlayerController : MonoBehaviour
         _initialLateralSpeed = _lateralSpeed;
         _initialLateralSmooth = _lateralSmooth;
         _initialMaxX = _maxX;
+
+        // 캐시 Animator (있다면)
+        _animator = GetComponentInChildren<Animator>();
     }
 
     void Update()
     {
+        if (_isDead)
+            return;
+
         HandleInput();
 
         // 항상 앞으로 이동
@@ -54,6 +65,9 @@ public class PlayerController : MonoBehaviour
 
     void HandleInput()
     {
+        if (_isDead)
+            return;
+
         // 터치 우선 처리 (모바일)
         if (Input.touchCount > 0)
         {
@@ -108,6 +122,40 @@ public class PlayerController : MonoBehaviour
         _targetX = Mathf.Clamp(_targetX, -_maxX, _maxX);
     }
 
+    // Public method to externally trigger player death (used by Interactable when type is Enemy)
+    public void Kill()
+    {
+        if (_isDead) return;
+        StartCoroutine(DieRoutine());
+    }
+
+    private System.Collections.IEnumerator DieRoutine()
+    {
+        _isDead = true;
+
+        // 애니메이터에 death 플래그 설정
+        if (_animator != null)
+        {
+            _animator.SetBool("death", true);
+        }
+
+        // 플레이어 움직임 정지
+        _isDragging = false;
+        _forwardSpeed = 0f;
+        _lateralSpeed = 0f;
+
+        var rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        // N초 후 씬 리로드
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     // --- 추가: 스테이지가 리셋될 때 호출하여 플레이어를 초기 위치/상태로 되돌립니다 ---
     public void ResetToStart()
     {
@@ -128,5 +176,10 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
+
+        // reset death flag
+        _isDead = false;
+        if (_animator != null)
+            _animator.SetBool("death", false);
     }
 }

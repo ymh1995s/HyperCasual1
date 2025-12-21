@@ -4,5 +4,6 @@ public enum ItemType
     Drone,
     ATKPowerUp,
     ATKSpeedUp,
-    Treasure
+    Treasure,
+    Enemy
 }

@@ -5,27 +5,34 @@ public class Interactable : MonoBehaviour
 {
     [SerializeField] private ItemType _type = ItemType.Treasure;
     [SerializeField] private int _value = 1; // amount or level
-    [SerializeField] private bool _autoDestroy = false; // default: stack by default
     [Header("Pile Settings")]
     [SerializeField] private Vector3 _pileOffset = Vector3.zero; // offset when stacking on player's pile
 
-    void Reset()
-    {
-        // Ensure collider is trigger by default for pickups
-        var col = GetComponent<Collider>();
-        col.isTrigger = true;
-    }
-
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (!other.CompareTag("Player"))
+            return;
+
+        var player = other.GetComponent<Player>();
+        if (player == null)
+            return;
+
+        // If this Interactable is an enemy type, trigger player death
+        if (_type == ItemType.Enemy)
         {
-            var player = other.GetComponent<Player>();
-            if (player != null && player.Inventory != null)
+            var controller = player.Controller;
+            if (controller != null)
             {
-                // Delegate pickup to PlayerInventory. Pass this gameObject and whether to auto-destroy and per-item pile offset.
-                player.Inventory.PickupItem(_type, _value, gameObject, _autoDestroy, _pileOffset);
+                controller.Kill();
             }
+
+            return;
+        }
+
+        // Otherwise, delegate pickup to PlayerInventory. Pass this gameObject and a fixed autoDestroy value (inventory expects the parameter).
+        if (player.Inventory != null)
+        {
+            player.Inventory.PickupItem(_type, _value, gameObject, false, _pileOffset);
         }
     }
 
