@@ -35,6 +35,12 @@ public class Drone : MonoBehaviour
     [SerializeField] private float _maxDistanceFromPlayer = 8f;
     [Tooltip("플레이어 주변 순회 반경")]
     [SerializeField] private float _patrolRadius = 4f;
+    [Tooltip("순회 지점 갱신 주기(초)")]
+    [Range(0.1f, 30f)]
+    [SerializeField] private float _patrolInterval = 2f;
+    [Tooltip("순회 지점 최초 지연(초)")]
+    [Range(0f, 10f)]
+    [SerializeField] private float _patrolInitialDelay = 1.5f;
     [Tooltip("이동시 사용되는 이징 (DoTween Ease)")]
     [SerializeField] private Ease _movementEase = Ease.InOutSine;
 
@@ -118,7 +124,7 @@ public class Drone : MonoBehaviour
 
         // 초기 순회 지점 설정 및 주기적 갱신
         PickNewPatrolPoint();
-        InvokeRepeating(nameof(PickNewPatrolPoint), 1.5f, 2f);
+        InvokeRepeating(nameof(PickNewPatrolPoint), _patrolInitialDelay, _patrolInterval);
     }
 
     // Update: 프로펠러 회전, 타겟 조준, 이동 시작 처리
@@ -371,7 +377,7 @@ public class Drone : MonoBehaviour
             var current = queue.Dequeue();
             if (current.name == name)
                 return current;
-            for (int i = 0; i < current.childCount; i++)
+            for (int i = 0; current != null && i < current.childCount; i++)
                 queue.Enqueue(current.GetChild(i));
         }
         return null;

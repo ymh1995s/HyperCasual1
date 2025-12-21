@@ -1179,15 +1179,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Drone
   _gun: {fileID: 0}
   _propeller: {fileID: 0}
-  _minAltitude: 1.5
-  _maxAltitude: 2.95
-  _hoverAmplitude: 0.335
+  _minAltitude: 2
+  _maxAltitude: 4
+  _hoverAmplitude: 0.3
   _hoverDuration: 1
   _useHover: 1
   _hoverSmooth: 8
-  _moveSpeed: 3
+  _moveSpeed: 2
   _maxDistanceFromPlayer: 5
   _patrolRadius: 4
+  _patrolInterval: 3
+  _patrolInitialDelay: 2
   _movementEase: 4
   _propellerSpeed: 1500
   _searchRange: 12
