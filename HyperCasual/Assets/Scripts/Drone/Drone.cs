@@ -66,6 +66,10 @@ public class Drone : MonoBehaviour
     [Tooltip("타겟 기즈모 색상")]
     [SerializeField] private Color _targetGizmoColor = Color.red;
 
+    [Header("포지션 (Positioning)")]
+    [Tooltip("드론이 항상 플레이어보다 최소 이만큼 앞(Z)에 위치하도록 하는 최소 오프셋")]
+    [SerializeField] private float _minAheadZ = 2f;
+
     // 캐싱된 초기 상태
     private Vector3 _initialPosition;
     private Quaternion _initialRotation;
@@ -210,6 +214,9 @@ public class Drone : MonoBehaviour
                     Vector3 dirToPlayer = (_player.position - transform.position).normalized;
                     goal = _player.position - dirToPlayer * (_maxDistanceFromPlayer * 0.6f);
                 }
+
+                // Ensure drone remains ahead of the player on the Z axis
+                goal.z = Mathf.Max(goal.z, _player.position.z + _minAheadZ);
             }
 
             MoveTo(goal);
@@ -291,6 +298,9 @@ public class Drone : MonoBehaviour
         float radius = (float)(_rng.NextDouble() * _patrolRadius);
         Vector3 offset = new Vector3(Mathf.Cos(angle) * radius, 0f, Mathf.Sin(angle) * radius);
         _nextPatrolPoint = _player.position + offset;
+
+        // Make sure the patrol point is ahead of the player
+        _nextPatrolPoint.z = Mathf.Max(_nextPatrolPoint.z, _player.position.z + _minAheadZ);
     }
 
     // 주기적 적 탐색 (가까운 적에 가중치를 더 줌)
@@ -314,10 +324,12 @@ public class Drone : MonoBehaviour
             if (go == null) continue;
             var t = go.transform;
 
-            float planarDist = Vector3.Distance(new Vector3(t.position.x, 0f, t.position.z), new Vector3(transform.position.x, 0f, transform.position.z));
+            // Compute planar distance relative to the player (XZ plane)
+            float planarDist = Vector3.Distance(new Vector3(t.position.x, 0f, t.position.z), new Vector3(_player.position.x, 0f, _player.position.z));
             if (planarDist > _searchRange) continue;
 
-            if (_player != null && t.position.z <= _player.position.z) continue; // 플레이어 앞에 있는 적만
+            // Only consider enemies that are in front of the player (higher Z)
+            if (t.position.z <= _player.position.z) continue;
 
             candidates.Add(t);
             float w = 1f / (planarDist + 0.01f);
@@ -361,7 +373,19 @@ public class Drone : MonoBehaviour
     private bool IsValidTarget(Transform t)
     {
         if (t == null) return false;
-        float planarDist = Vector3.Distance(new Vector3(t.position.x, 0f, t.position.z), new Vector3(transform.position.x, 0f, transform.position.z));
+
+        float planarDist;
+        if (_player != null)
+        {
+            planarDist = Vector3.Distance(new Vector3(t.position.x, 0f, t.position.z), new Vector3(_player.position.x, 0f, _player.position.z));
+            // ensure target is ahead of player in Z
+            if (t.position.z <= _player.position.z) return false;
+        }
+        else
+        {
+            planarDist = Vector3.Distance(new Vector3(t.position.x, 0f, t.position.z), new Vector3(transform.position.x, 0f, transform.position.z));
+        }
+
         if (planarDist > _searchRange * 1.2f) return false;
         return t.gameObject.activeInHierarchy;
     }
@@ -455,5 +479,13 @@ public class Drone : MonoBehaviour
 
         // restart hover tween if enabled
         SetupHoverTween();
+
+        // Ensure drone start position is ahead of player
+        if (_player != null)
+        {
+            var pos = transform.position;
+            pos.z = Mathf.Max(pos.z, _player.position.z + _minAheadZ);
+            transform.position = pos;
+        }
     }
 }
