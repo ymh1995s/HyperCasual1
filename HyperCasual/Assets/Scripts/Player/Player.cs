@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections;
-using MasterStylizedProjectile;
 
 [System.Serializable]
 public class EffectsGroup

@@ -12,6 +12,10 @@ public class Bullet : MonoBehaviour
     public AudioClip bulletClip;
     public AudioClip onHitClip;
 
+    // 기본 데미지 (외부에서 조정 가능)
+    [Tooltip("Damage dealt to enemies on hit")]
+    public int DamageAmount = 10;
+
     public bool isTargeting;
     public Transform target;
     public float rotSpeed = 0;
@@ -91,6 +95,13 @@ public class Bullet : MonoBehaviour
         if (other == null || !other.gameObject.CompareTag("Enemy"))
         {
             return;
+        }
+
+        // Try to apply damage via IDamageable on the hit object or its parents
+        var damageable = other.GetComponentInParent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.Damage(DamageAmount);
         }
 
         if (OnHitEffect != null)
