@@ -18,9 +18,9 @@ MonoBehaviour:
     ChargeParticles: {fileID: 0}
     ChargeParticleTime: 0
     ChargeClip: {fileID: 0}
-    StartParticles: {fileID: 5901265137426972303, guid: 2248359051ce1f943bc5c0e82352b590, type: 3}
-    BulletParticles: {fileID: 7334263244268377879, guid: cc43894aafa349e4982e8d0be98c5f12, type: 3}
-    HitParticles: {fileID: 1234371104471166738, guid: b72e7c982f4c9c345a174b6910ea5841, type: 3}
+    StartParticles: {fileID: 7426118037662289519, guid: df85b74a2a8c69b4591bccb63712234a, type: 3}
+    BulletParticles: {fileID: 805799371890352888, guid: f318fd3260711c145b9b928c70936fca, type: 3}
+    HitParticles: {fileID: 2478481120118766419, guid: 5583a8f55e1261942a2a42b4a06b8473, type: 3}
     startClip: {fileID: 0}
     bulletClip: {fileID: 0}
     hitClip: {fileID: 0}
