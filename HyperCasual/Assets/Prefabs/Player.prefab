@@ -155,6 +155,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9807106d34bfeac42af04a6e79056fb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  _bulletDatas: {fileID: 11400000, guid: a104a7720a02a684fb782adee179e2be, type: 2}
+  _shootOrigin: {fileID: 0}
+  _shootInterval: 1
 --- !u!114 &1593423363234531096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d0df8390a6f4c40b9873b52c0dfd83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _forwardSpeed: 5
+  _forwardSpeed: 1
   _lateralSpeed: 10
   _lateralSmooth: 10
   _maxX: 3
@@ -1164,6 +1167,37 @@ Transform:
   - {fileID: 7371277741411338743}
   m_Father: {fileID: 3111277217894900619}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8474728048352470107
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2304197559928367879}
+  m_Layer: 0
+  m_Name: BulletSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2304197559928367879
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8474728048352470107}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1.269, y: -0, z: -0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6282231410622595502}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8583806960679432616
 GameObject:
   m_ObjectHideFlags: 0
@@ -1262,7 +1296,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6147826009795423660, guid: aca64d6e48bf38e49a4bfe36099a2f49, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2304197559928367879}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 3150474306388093854, guid: aca64d6e48bf38e49a4bfe36099a2f49, type: 3}
 --- !u!4 &6282231410622595502 stripped

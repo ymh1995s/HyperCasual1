@@ -525,18 +525,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 403607706987037800, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1593423363234531096, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
-      propertyPath: _forwardSpeed
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4930384638412091482, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
+    - target: {fileID: 4996528106726200643, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
+      propertyPath: _shootOrigin
+      value: 
+      objectReference: {fileID: 1814969101}
     - target: {fileID: 8386583106616025262, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -726,6 +718,11 @@ MonoBehaviour:
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3870396659798661533, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
   m_PrefabInstance: {fileID: 3546905760170712230}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1814969101 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2304197559928367879, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
+  m_PrefabInstance: {fileID: 845865106}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &2004851379 stripped
 MonoBehaviour:
