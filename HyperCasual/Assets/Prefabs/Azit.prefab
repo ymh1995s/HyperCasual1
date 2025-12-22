@@ -98,6 +98,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 537805617165148472}
+  - component: {fileID: 9097245425055855674}
+  - component: {fileID: 5650289852685940450}
+  - component: {fileID: 5407773470104832820}
   m_Layer: 0
   m_Name: Azit
   m_TagString: Untagged
@@ -113,11 +116,98 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3870396659798661533}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0.09014634, y: 10, z: 48.947773}
   m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 606589238082811622}
+  - {fileID: 1573221268832559028}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!65 &9097245425055855674
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3870396659798661533}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.66027325, y: 0.97179526, z: 0.5367428}
+  m_Center: {x: 0.017450929, y: -1.241422, z: 0.92137015}
+--- !u!114 &5650289852685940450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3870396659798661533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47a51ea2a945bbc429db73bcc17ba241, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Boss
+  _itemReturnTransform: {fileID: 1573221268832559028}
+  _treasureBoxPrefab: {fileID: 8341597015396488008, guid: 85e273b71e1574248a17cb4710c25734, type: 3}
+  _spawnJitter: 0.15
+  _baseTravelDuration: 2
+  _finishDelay: 0.5
+  _minArcHeight: 0.5
+  _maxArcHeight: 2
+  _maxLateralOffset: 0.1
+--- !u!114 &5407773470104832820
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3870396659798661533}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b959f3f4c98973c428c9637af7e2bd89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FinalArea
+  _boss: {fileID: 5650289852685940450}
+  _stopPlayer: 1
+--- !u!1 &5780221424802106832
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1573221268832559028}
+  m_Layer: 0
+  m_Name: GoalPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1573221268832559028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5780221424802106832}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.075, z: -0.685}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 537805617165148472}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

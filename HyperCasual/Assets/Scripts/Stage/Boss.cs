@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
@@ -8,33 +9,35 @@ public class Boss : MonoBehaviour
     [Tooltip("Where incoming items should be placed on the boss (assign a transform in inspector)")]
     [SerializeField] private Transform _itemReturnTransform;
 
-    [Tooltip("Time between starting each item's receive (seconds)")]
-    [SerializeField] private float _receiveInterval = 0.1f;
+    [Header("Treasure Spawn (for boss handover)")]
+    [Tooltip("Prefab to use for spawned treasure boxes when flying to the boss")]
+    [SerializeField] private GameObject _treasureBoxPrefab;
 
-    [Header("Tween Settings")]
-    [Tooltip("Duration of the incoming item tween")]
-    [SerializeField] private float _tweenDuration = 0.3f;
+    [Tooltip("Optional small positional jitter added to spawn points to avoid exact overlap")]
+    [SerializeField] private float _spawnJitter = 0.15f;
 
-    [Tooltip("Jump power for the parabolic arc")]
-    [SerializeField] private float _jumpPower = 0.5f;
+    [Tooltip("Base duration for an item to travel to the boss (seconds). Individual items are randomized around this value)")]
+    [SerializeField] private float _baseTravelDuration = 1.2f;
 
-    [Tooltip("Number of jumps during the tween (usually 1)")]
-    [SerializeField] private int _numJumps = 1;
+    [Tooltip("Delay after all items have arrived before finishing (seconds)")]
+    [SerializeField] private float _finishDelay = 0.5f;
 
-    [Tooltip("Ease for the tween")]
-    [SerializeField] private Ease _tweenEase = Ease.OutQuad;
+    // max upward multiplier for control point based on distance
+    [SerializeField] private float _minArcHeight = 0.5f;
+    [SerializeField] private float _maxArcHeight = 2.0f;
+
+    // lateral offset max for variation
+    [SerializeField] private float _maxLateralOffset = 0.6f;
 
     private bool _isReceiving = false;
-
-    public Transform ItemReturnTransform => _itemReturnTransform;
-
-    // Event to notify someone when all items have been received
-    public System.Action OnAllItemsReceived;
 
     // Called by FinalArea when player reaches it
     public void StartReceivingFromPlayer(GameObject player)
     {
         if (_isReceiving)
+            return;
+
+        if (player == null)
             return;
 
         var inv = player.GetComponent<PlayerInventory>();
@@ -44,57 +47,124 @@ public class Boss : MonoBehaviour
             return;
         }
 
-        StartCoroutine(ReceiveItemsCoroutine(inv));
+        int count = Mathf.Max(0, inv.TreasureCount);
+        if (count == 0)
+        {
+            // Nothing to do
+            return;
+        }
+
+        if (_treasureBoxPrefab == null)
+        {
+            Debug.LogWarning("Treasure box prefab not assigned on Boss.");
+            return;
+        }
+
+        StartCoroutine(ReceiveItemsCoroutine(inv, player.transform.position, count));
     }
 
-    private IEnumerator ReceiveItemsCoroutine(PlayerInventory inv)
+    private IEnumerator ReceiveItemsCoroutine(PlayerInventory inv, Vector3 playerPosition, int count)
     {
         _isReceiving = true;
 
-        while (inv != null && inv.HasStackedItems())
+        Vector3 bossPos = (_itemReturnTransform != null) ? _itemReturnTransform.position : transform.position;
+
+        List<GameObject> spawned = new List<GameObject>(count);
+
+        // Spawn all treasures at player's position with small jitter
+        for (int i = 0; i < count; i++)
         {
-            // Peek the top item without removing it so the inventory is updated only after tween completes
-            var item = inv.PeekTopStackedItem();
-            if (item == null)
-                break;
+            Vector3 jitter = new Vector3(
+                Random.Range(-_spawnJitter, _spawnJitter),
+                Random.Range(-_spawnJitter, _spawnJitter),
+                Random.Range(-_spawnJitter, _spawnJitter));
 
-            if (_itemReturnTransform != null)
-            {
-                // Ensure item is unparented so it moves in world space
-                item.transform.SetParent(null);
+            GameObject go = Instantiate(_treasureBoxPrefab, playerPosition + jitter, Quaternion.identity);
 
-                var rb = item.GetComponent<Rigidbody>();
-                if (rb != null)
-                    rb.isKinematic = true;
+            // Defensive: ensure visible scale
+            if (go != null && go.transform.localScale == Vector3.zero)
+                go.transform.localScale = Vector3.one;
 
-                Vector3 targetPos = _itemReturnTransform.position;
-
-                // Kill any existing tweens on the transform
-                item.transform.DOKill();
-
-                // Animate with DOJump for a parabolic arc and wait for completion
-                var tweener = item.transform.DOJump(targetPos, _jumpPower, _numJumps, _tweenDuration)
-                    .SetEase(_tweenEase);
-
-                yield return tweener.WaitForCompletion();
-
-                // After tween completes, inventory should remove and destroy the item
-                inv.RemoveTopStackedItem(item);
-            }
-            else
-            {
-                // No return transform; just remove and destroy top item
-                inv.RemoveTopStackedItem(item);
-            }
-
-            // Wait a bit before processing next item to space arrivals
-            yield return new WaitForSeconds(_receiveInterval);
+            spawned.Add(go);
         }
 
-        _isReceiving = false;
+        int remaining = spawned.Count;
 
-        // Notify listeners that boss finished receiving all items
-        if (OnAllItemsReceived != null)
-            OnAllItemsReceived.Invoke();
+        // Launch each spawned object towards the boss along a parabolic quadratic Bezier using DOTween
+        for (int i = 0; i < spawned.Count; i++)
+        {
+            GameObject go = spawned[i];
+            if (go == null)
+            {
+                remaining--;
+                continue;
+            }
+
+            Vector3 start = go.transform.position;
+
+            // small target jitter so they don't overlap exactly
+            Vector3 targetJitter = new Vector3(
+                Random.Range(-_spawnJitter, _spawnJitter),
+                Random.Range(-_spawnJitter, _spawnJitter),
+                Random.Range(-_spawnJitter, _spawnJitter));
+
+            Vector3 target = bossPos + targetJitter;
+
+            float dist = Vector3.Distance(start, target);
+
+            // choose arc height proportional to distance but randomized
+            float arcHeight = Random.Range(_minArcHeight, _maxArcHeight) * Mathf.Sqrt(dist);
+
+            // lateral offset perpendicular to flight direction for variety
+            Vector3 dir = (target - start);
+            Vector3 planarDir = new Vector3(dir.x, 0f, dir.z).normalized;
+            Vector3 perp = Vector3.Cross(planarDir, Vector3.up).normalized;
+            float lateral = Random.Range(-_maxLateralOffset, _maxLateralOffset) * dist;
+
+            Vector3 control = (start + target) * 0.5f + Vector3.up * arcHeight + perp * lateral;
+
+            // randomize duration (50% - 150% of base)
+            float duration = Mathf.Max(0.05f, Random.Range(_baseTravelDuration * 0.5f, _baseTravelDuration * 1.5f));
+
+            // create a tween that animates t from 0 to 1 and updates position along quadratic Bezier
+            float t = 0f;
+            DOTween.To(() => t, x => t = x, 1f, duration)
+                .SetEase(Ease.OutQuad)
+                .OnUpdate(() =>
+                {
+                    if (go == null) return;
+                    // Quadratic Bezier: B(t) = (1-t)^2 * P0 + 2(1-t)t * CP + t^2 * P1
+                    float invt = 1f - t;
+                    Vector3 pos = invt * invt * start + 2f * invt * t * control + t * t * target;
+                    // Ensure y >= 0 during flight
+                    pos.y = Mathf.Max(0f, pos.y);
+                    go.transform.position = pos;
+                })
+                .OnComplete(() =>
+                {
+                    // Ensure final position is target (and above ground)
+                    if (go != null)
+                    {
+                        Vector3 final = target;
+                        final.y = Mathf.Max(0f, final.y);
+                        go.transform.position = final;
+                    }
+
+                    inv.ConsumeTreasures(1);
+                    if (go != null)
+                        Destroy(go);
+
+                    remaining--;
+                });
+        }
+
+        // wait until all arrived
+        while (remaining > 0)
+            yield return null;
+
+        if (_finishDelay > 0f)
+            yield return new WaitForSeconds(_finishDelay);
+
+        _isReceiving = false;
     }
 }

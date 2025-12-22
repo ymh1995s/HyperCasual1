@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
     private bool _isDead = false;
     private Animator _animator;
 
+    // Optional explicit reference to StageController to handle restarts; if null we will attempt to find one at runtime
+    [SerializeField] private StageController _stageController;
+
     void Start()
     {
         _targetX = transform.position.x;
@@ -151,9 +154,21 @@ public class PlayerController : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        // N초 후 씬 리로드
+        // N초 후 스테이지 컨트롤러에게 재시작 요청
         yield return new WaitForSeconds(5f);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        if (_stageController == null)
+            _stageController = FindObjectOfType<StageController>();
+
+        if (_stageController != null)
+        {
+            _stageController.RestartStageImmediate();
+        }
+        else
+        {
+            // Fallback: if no StageController exists, reload the scene
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     // --- 추가: 스테이지가 리셋될 때 호출하여 플레이어를 초기 위치/상태로 되돌립니다 ---

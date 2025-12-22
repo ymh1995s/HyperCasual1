@@ -392,11 +392,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25f181ededcd4e74cb19ad0f9cf37677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  maxHealth: 50
-  rewardPrefab: {fileID: 0}
-  rewardCount: 1
-  rewardSpawnOffset: {x: 0, y: 0, z: 0}
-  deathDelay: 3
+  _maxHealth: 50
+  _rewardPrefab: {fileID: 7527899428018225325, guid: db5a221c216364e49adfdeb190abab65, type: 3}
+  _deathDelay: 3
 --- !u!1 &1752205383570065495
 GameObject:
   m_ObjectHideFlags: 0

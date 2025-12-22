@@ -32,8 +32,13 @@ public class Interactable : MonoBehaviour
         // Otherwise, delegate pickup to PlayerInventory. Pass this gameObject and a fixed autoDestroy value (inventory expects the parameter).
         if (player.Inventory != null)
         {
+            Debug.Log($"Interactable picked up by player: type={_type}, value={_value}, obj={gameObject.name}");
             player.Inventory.PickupItem(_type, _value, gameObject, false, _pileOffset);
         }
+
+        // Ensure the interactable object is removed from the scene immediately after pickup.
+        // PlayerInventory may also destroy the object, but double-Destroy is safe in Unity.
+        Destroy(gameObject);
     }
 
 #if UNITY_EDITOR

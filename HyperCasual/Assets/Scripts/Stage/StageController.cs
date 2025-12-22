@@ -23,14 +23,16 @@ public class StageController : MonoBehaviour
     {
         if (_boss != null)
         {
-            _boss.OnAllItemsReceived += OnBossFinishedReceiving;
+            //_boss.OnAllItemsReceived += OnBossFinishedReceiving;
         }
     }
 
     private void OnDestroy()
     {
         if (_boss != null)
-            _boss.OnAllItemsReceived -= OnBossFinishedReceiving;
+        {
+            //_boss.OnAllItemsReceived -= OnBossFinishedReceiving;
+        }
     }
 
     private void OnBossFinishedReceiving()
@@ -60,5 +62,24 @@ public class StageController : MonoBehaviour
             _playerController.ResetToStart();
 
         // Optionally, re-enable any player movement locks or UI
+    }
+
+    // Public method so external systems (e.g. PlayerController on death) can request an immediate stage reset
+    public void RestartStageImmediate()
+    {
+        // Hide any victory UI
+        if (_victoryUI != null)
+            _victoryUI.SetActive(false);
+
+        // Respawn stage items
+        if (_spawner != null)
+            _spawner.Respawn();
+
+        // Reset player to start
+        if (_playerController != null)
+            _playerController.ResetToStart();
+
+        // Cancel any pending AdvanceToNextStage invokes
+        CancelInvoke(nameof(AdvanceToNextStage));
     }
 }

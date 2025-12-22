@@ -156,8 +156,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   _bulletDatas: {fileID: 11400000, guid: a104a7720a02a684fb782adee179e2be, type: 2}
-  _shootOrigin: {fileID: 0}
-  _shootInterval: 1
+  _shootOrigin: {fileID: 2304197559928367879}
+  _shootInterval: 0.2
 --- !u!114 &1593423363234531096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,7 +170,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d0df8390a6f4c40b9873b52c0dfd83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  _forwardSpeed: 1
+  _forwardSpeed: 5
   _lateralSpeed: 10
   _lateralSmooth: 10
   _maxX: 3

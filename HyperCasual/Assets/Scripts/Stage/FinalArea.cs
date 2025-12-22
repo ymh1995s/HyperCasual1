@@ -9,6 +9,8 @@ public class FinalArea : MonoBehaviour
     [Tooltip("Should player movement be stopped when entering the final area?")]
     [SerializeField] private bool _stopPlayer = true;
 
+    private bool _hasTriggered = false;
+
     private void Reset()
     {
         // Ensure collider is trigger by default
@@ -18,6 +20,9 @@ public class FinalArea : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (_hasTriggered)
+            return;
+
         if (_boss == null) 
         {
             Debug.LogWarning("FinalArea has no Boss assigned.");
@@ -31,6 +36,14 @@ public class FinalArea : MonoBehaviour
 
         if (inv == null || controller == null)
             return;
+
+        // Mark as triggered to prevent duplicate activations
+        _hasTriggered = true;
+
+        // Optionally disable collider to avoid additional triggers from physics
+        var col = GetComponent<Collider>();
+        if (col != null)
+            col.enabled = false;
 
         // Stop player's forward movement and lateral input when entering final area
         if (_stopPlayer)
