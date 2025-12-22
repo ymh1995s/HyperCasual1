@@ -755,6 +755,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Azit
       objectReference: {fileID: 0}
+    - target: {fileID: 3870396659798661533, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
