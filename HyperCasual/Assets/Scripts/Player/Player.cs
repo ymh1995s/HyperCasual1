@@ -34,10 +34,15 @@ public class Player : MonoBehaviour
 
     private Coroutine _autoShootCoroutine;
 
+    private Boss _boss;
+
     void Awake()
     {
         _controller = GetComponent<PlayerController>();
         _inventory = GetComponent<PlayerInventory>();
+
+        // cache boss reference if present
+        _boss = FindObjectOfType<Boss>();
     }
 
     void Start()
@@ -54,6 +59,15 @@ public class Player : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(_shootInterval);
+
+            // do not shoot while player is dead
+            if (_controller != null && _controller.IsDead)
+                continue;
+
+            // do not shoot while boss is receiving (player reached boss zone)
+            if (_boss != null && _boss.IsReceiving)
+                continue;
+
             DoPlayerShoot();
         }
     }

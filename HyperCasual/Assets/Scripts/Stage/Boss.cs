@@ -31,6 +31,9 @@ public class Boss : MonoBehaviour
 
     private bool _isReceiving = false;
 
+    // expose read-only flag so other systems can check
+    public bool IsReceiving => _isReceiving;
+
     // Called by FinalArea when player reaches it
     public void StartReceivingFromPlayer(GameObject player)
     {
@@ -165,6 +168,20 @@ public class Boss : MonoBehaviour
         if (_finishDelay > 0f)
             yield return new WaitForSeconds(_finishDelay);
 
+        // Finished receiving: unset flag
         _isReceiving = false;
+
+        // After 3 seconds request StageController to restart the stage (respawn, reset player/drone state)
+        yield return new WaitForSeconds(3f);
+
+        var stageController = FindObjectOfType<StageController>();
+        if (stageController != null)
+        {
+            stageController.RestartStageImmediate();
+        }
+        else
+        {
+            Debug.LogWarning("StageController not found when attempting to restart after boss handover.");
+        }
     }
 }

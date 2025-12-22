@@ -19,57 +19,28 @@ public class StageController : MonoBehaviour
     [Tooltip("Delay before restarting the loop after boss receives all items")]
     [SerializeField] private float _restartDelay = 1.0f;
 
-    private void Start()
-    {
-        if (_boss != null)
-        {
-            //_boss.OnAllItemsReceived += OnBossFinishedReceiving;
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (_boss != null)
-        {
-            //_boss.OnAllItemsReceived -= OnBossFinishedReceiving;
-        }
-    }
-
-    private void OnBossFinishedReceiving()
-    {
-        // Show victory UI if assigned
-        if (_victoryUI != null)
-            _victoryUI.SetActive(true);
-
-        // Advance to next stage after a short delay to let the player see the result
-        Invoke(nameof(AdvanceToNextStage), _restartDelay);
-    }
-
-    private void AdvanceToNextStage()
-    {
-        // Hide victory UI
-        if (_victoryUI != null)
-            _victoryUI.SetActive(false);
-
-        // Respawn items using public Respawn if available
-        if (_spawner != null)
-        {
-            _spawner.Respawn();
-        }
-
-        // Reset player position and movement
-        if (_playerController != null)
-            _playerController.ResetToStart();
-
-        // Optionally, re-enable any player movement locks or UI
-    }
-
     // Public method so external systems (e.g. PlayerController on death) can request an immediate stage reset
     public void RestartStageImmediate()
     {
         // Hide any victory UI
         if (_victoryUI != null)
             _victoryUI.SetActive(false);
+
+        // Remove any lingering interactables in scene (defensive)
+        var interactables = FindObjectsOfType<Interactable>();
+        foreach (var it in interactables)
+        {
+            if (it != null && it.gameObject != null)
+                Destroy(it.gameObject);
+        }
+
+        // Remove any existing bullets/projectiles
+        var bullets = FindObjectsOfType<Bullet>();
+        foreach (var b in bullets)
+        {
+            if (b != null && b.gameObject != null)
+                Destroy(b.gameObject);
+        }
 
         // Respawn stage items
         if (_spawner != null)
@@ -79,7 +50,15 @@ public class StageController : MonoBehaviour
         if (_playerController != null)
             _playerController.ResetToStart();
 
-        // Cancel any pending AdvanceToNextStage invokes
-        CancelInvoke(nameof(AdvanceToNextStage));
+        // Reset drones
+        var drones = FindObjectsOfType<Drone>();
+        foreach (var d in drones)
+        {
+            if (d != null)
+                d.ResetToStart();
+        }
+
+        // Cancel any pending restart invokes
+        CancelInvoke(nameof(RestartStageImmediate));
     }
 }

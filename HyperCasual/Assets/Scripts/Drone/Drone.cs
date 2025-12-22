@@ -66,6 +66,10 @@ public class Drone : MonoBehaviour
     [Tooltip("타겟 기즈모 색상")]
     [SerializeField] private Color _targetGizmoColor = Color.red;
 
+    // 캐싱된 초기 상태
+    private Vector3 _initialPosition;
+    private Quaternion _initialRotation;
+
     // 내부 상태
     private Transform _player;
     private Transform _targetEnemy;
@@ -98,6 +102,10 @@ public class Drone : MonoBehaviour
         var playerObj = GameObject.FindWithTag("Player");
         if (playerObj != null)
             _player = playerObj.transform;
+
+        // cache initial transform so resets can restore
+        _initialPosition = transform.position;
+        _initialRotation = transform.rotation;
     }
 
     // Start: 호버 트윈 및 주기적 탐색/순회 시작
@@ -403,5 +411,49 @@ public class Drone : MonoBehaviour
     {
         if (_hoverTween != null) _hoverTween.Kill();
         if (_movementTween != null) _movementTween.Kill();
+    }
+
+    // Public: reset drone to initial start state (used by StageController when restarting)
+    public void ResetToStart()
+    {
+        // Stop tweens
+        if (_hoverTween != null)
+        {
+            _hoverTween.Kill();
+            _hoverTween = null;
+        }
+        if (_movementTween != null)
+        {
+            _movementTween.Kill();
+            _movementTween = null;
+        }
+
+        // Cancel invokes
+        CancelInvoke(nameof(SearchForEnemies));
+        CancelInvoke(nameof(PickNewPatrolPoint));
+
+        // restore transform
+        transform.position = _initialPosition;
+        transform.rotation = _initialRotation;
+
+        // reset internal flags
+        _isMoving = false;
+        _targetEnemy = null;
+        _lastTargetSetTime = -999f;
+
+        // reset hover and baseY
+        _hoverOffset = -_hoverAmplitude;
+        float desiredBase = transform.position.y;
+        float minBase = _minAltitude + _hoverAmplitude;
+        float maxBase = _maxAltitude - _hoverAmplitude;
+        _baseY = Mathf.Clamp(desiredBase, minBase, maxBase);
+
+        // restart periodic invokes
+        InvokeRepeating(nameof(SearchForEnemies), 0.2f, _searchInterval);
+        PickNewPatrolPoint();
+        InvokeRepeating(nameof(PickNewPatrolPoint), _patrolInitialDelay, _patrolInterval);
+
+        // restart hover tween if enabled
+        SetupHoverTween();
     }
 }

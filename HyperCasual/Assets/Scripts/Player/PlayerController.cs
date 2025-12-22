@@ -31,6 +31,9 @@ public class PlayerController : MonoBehaviour
     private bool _isDead = false;
     private Animator _animator;
 
+    // expose read-only death state for other components
+    public bool IsDead => _isDead;
+
     // Optional explicit reference to StageController to handle restarts; if null we will attempt to find one at runtime
     [SerializeField] private StageController _stageController;
 

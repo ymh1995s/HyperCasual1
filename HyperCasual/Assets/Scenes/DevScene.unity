@@ -527,7 +527,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1593423363234531096, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
       propertyPath: _forwardSpeed
-      value: 15
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4784088419752201779, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
       propertyPath: _treasureCount
@@ -543,7 +543,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8386583106616025262, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -3
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 8386583106616025262, guid: 0b2bdf36f78c76540a9bbb49cae60d93, type: 3}
       propertyPath: m_LocalRotation.w
