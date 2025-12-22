@@ -125,14 +125,37 @@ public class Enemy : MonoBehaviour, IDamageable
         // wait for animation / effects
         yield return new WaitForSeconds(_deathDelay);
 
+        bool spawned = false;
+
         // spawn reward if assigned
         if (_rewardPrefab != null)
         {
             Instantiate(_rewardPrefab, transform.position, Quaternion.identity);
+            spawned = true;
         }
 
-        // finally destroy this enemy
-        Destroy(gameObject);
+        // if a reward prefab was spawned, remove enemy object from scene
+        if (spawned)
+        {
+            Destroy(gameObject);
+            yield break;
+        }
+
+        // Otherwise, keep the root GameObject in scene but disable visuals and this component
+        // (colliders and tags already disabled in DisableCollidersAndTags)
+        var renderers = GetComponentsInChildren<Renderer>(true);
+        foreach (var r in renderers)
+        {
+            if (r != null)
+                r.enabled = false;
+        }
+
+        // disable animator if present
+        if (_animator != null)
+            _animator.enabled = false;
+
+        // disable this script to prevent further logic
+        this.enabled = false;
     }
 
     // Recursive search for child transforms named "RedBar" and cache Image components
