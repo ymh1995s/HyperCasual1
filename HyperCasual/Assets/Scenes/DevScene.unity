@@ -678,7 +678,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1467214388
 Transform:
   m_ObjectHideFlags: 0
@@ -872,40 +872,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1573221268832559028, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.075
-      objectReference: {fileID: 0}
-    - target: {fileID: 1573221268832559028, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.685
-      objectReference: {fileID: 0}
     - target: {fileID: 3870396659798661533, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
       propertyPath: m_Name
       value: Azit
       objectReference: {fileID: 0}
-    - target: {fileID: 5650289852685940450, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
-      propertyPath: _maxLateralOffset
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5650289852685940450, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
-      propertyPath: _baseTravelDuration
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5650289852685940450, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
-      propertyPath: _itemReturnTransform
-      value: 
-      objectReference: {fileID: 3546905760170712231}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
---- !u!4 &3546905760170712231 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1573221268832559028, guid: 4edb591c416dd0e418dc44975e07c4c5, type: 3}
-  m_PrefabInstance: {fileID: 3546905760170712230}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4011404669510776886
 GameObject:
   m_ObjectHideFlags: 0
